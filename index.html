@@ -657,16 +657,6 @@ function showResult() {
     countB: count.B,
     countC: count.C
   }));
-const formData = new FormData();
-  formData.append('data', JSON.stringify({
-    name: userInfo.name,
-    age: userInfo.age,
-    phone: userInfo.phone,
-    result: r.title,
-    countA: count.A,
-    countB: count.B,
-    countC: count.C
-  }));
   fetch(SCRIPT_URL, {
     method: 'POST',
     mode: 'no-cors',
