@@ -256,7 +256,21 @@
   .brand-footer { text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); }
   .brand-tagline { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--text-light); line-height: 1.8; }
   .brand-name { font-size: 13px; letter-spacing: 0.4em; color: var(--text-light); margin-top: 16px; }
-  .btn-retry { background: none; border: 1px solid var(--border); padding: 14px 36px; font-family: 'Noto Serif KR', serif; font-size: 15px; letter-spacing: 0.2em; color: var(--text-light); cursor: pointer; margin-top: 28px; transition: all 0.3s; }
+  .btn-store {
+    display: block;
+    background: var(--text);
+    color: var(--bg);
+    text-decoration: none;
+    padding: 18px 36px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    letter-spacing: 0.15em;
+    margin-top: 32px;
+    text-align: center;
+    transition: opacity 0.3s;
+  }
+  .btn-store:hover { opacity: 0.75; }
+  .btn-retry { background: none; border: 1px solid var(--border); padding: 14px 36px; font-family: 'Noto Serif KR', serif; font-size: 15px; letter-spacing: 0.2em; color: var(--text-light); cursor: pointer; margin-top: 16px; transition: all 0.3s; display: inline-block; }
   .btn-retry:hover { border-color: var(--text); color: var(--text); }
 
   @keyframes fadeUp {
@@ -627,6 +641,8 @@ function renderResultBody(rList) {
       </div>
     `;
   });
+
+  html += `<a href="https://smartstore.naver.com/hyangpro" target="_blank" class="btn-store">나에게 맞는 향 찾으러 가기</a>`;
 
   document.getElementById('resultBody').innerHTML = html;
 }
