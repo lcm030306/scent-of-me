@@ -246,8 +246,10 @@
 
   .result-body { padding: 48px 24px 80px; max-width: 560px; margin: 0 auto; }
   .result-name { font-size: 16px; color: var(--text-light); letter-spacing: 0.1em; margin-bottom: 32px; }
-  .result-desc { font-size: 18px; font-weight: 300; line-height: 2.2; color: var(--text); margin-bottom: 40px; border-left: 2px solid var(--border); padding-left: 24px; }
-  .result-insight { background: white; border: 1px solid var(--border); padding: 28px; margin-bottom: 40px; }
+  .result-section { margin-bottom: 48px; }
+  .result-section-label { font-family: 'Cormorant Garamond', serif; font-size: 18px; letter-spacing: 0.2em; color: var(--text-light); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+  .result-desc { font-size: 18px; font-weight: 300; line-height: 2.2; color: var(--text); margin-bottom: 24px; border-left: 2px solid var(--border); padding-left: 24px; }
+  .result-insight { background: white; border: 1px solid var(--border); padding: 28px; margin-bottom: 0; }
   .insight-title { font-family: 'Cormorant Garamond', serif; font-size: 14px; letter-spacing: 0.3em; color: var(--text-light); margin-bottom: 16px; }
   .insight-text { font-size: 17px; font-weight: 300; line-height: 2; color: var(--text); }
 
@@ -359,13 +361,8 @@
     </div>
   </div>
 
-  <div class="result-body">
+  <div class="result-body" id="resultBody">
     <p class="result-name" id="resultName"></p>
-    <p class="result-desc" id="resultDesc"></p>
-    <div class="result-insight">
-      <p class="insight-title">INSIGHT</p>
-      <p class="insight-text" id="resultInsight"></p>
-    </div>
   </div>
 
   <div class="brand-footer">
@@ -614,6 +611,26 @@ function goPrev() {
   }
 }
 
+function renderResultBody(rList) {
+  const name = userInfo.name;
+  let html = `<p class="result-name">${name} 님의 결과</p>`;
+
+  rList.forEach(r => {
+    html += `
+      <div class="result-section">
+        <p class="result-section-label">${r.symbol} ${r.label}</p>
+        <p class="result-desc">${r.desc}</p>
+        <div class="result-insight">
+          <p class="insight-title">INSIGHT</p>
+          <p class="insight-text">${r.insight}</p>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('resultBody').innerHTML = html;
+}
+
 function showResult() {
   document.getElementById('survey').style.display = 'none';
   document.getElementById('result').style.display = 'block';
@@ -624,17 +641,44 @@ function showResult() {
   const max = Math.max(count.A, count.B, count.C);
   const winners = Object.keys(count).filter(k => count[k] === max);
   const allSimilar = Object.values(count).every(v => Math.abs(v - max) <= 1);
-  const key = (allSimilar && winners.length > 1) ? 'BALANCE' : winners[0];
-  const r = results[key];
 
-  document.getElementById('resultHero').className = `result-hero ${r.heroClass}`;
-  document.getElementById('resultSymbol').textContent = r.symbol;
-  document.getElementById('resultLabel').textContent = r.label;
-  document.getElementById('resultTitle').textContent = r.title;
-  document.getElementById('resultSub').textContent = r.sub;
-  document.getElementById('resultName').textContent = userInfo.name + ' 님의 결과';
-  document.getElementById('resultDesc').textContent = r.desc;
-  document.getElementById('resultInsight').textContent = r.insight;
+  let resultTitleForSheet;
+
+  if (allSimilar && winners.length > 1) {
+    // 균형
+    const r = results['BALANCE'];
+    document.getElementById('resultHero').className = `result-hero ${r.heroClass}`;
+    document.getElementById('resultSymbol').textContent = r.symbol;
+    document.getElementById('resultLabel').textContent = r.label;
+    document.getElementById('resultTitle').textContent = r.title;
+    document.getElementById('resultSub').textContent = r.sub;
+    renderResultBody([r]);
+    resultTitleForSheet = r.title;
+
+  } else if (winners.length === 2) {
+    // 2가지 동점
+    const r1 = results[winners[0]];
+    const r2 = results[winners[1]];
+    document.getElementById('resultHero').className = `result-hero balance-result`;
+    document.getElementById('resultSymbol').textContent = `${r1.symbol} ${r2.symbol}`;
+    document.getElementById('resultLabel').textContent = `${r1.label}  ·  ${r2.label}`;
+    document.getElementById('resultTitle').textContent = `${r1.title} & ${r2.title}`;
+    document.getElementById('resultSub').textContent = '지금, 두 가지 내가 함께 나와 있습니다';
+    renderResultBody([r1, r2]);
+    resultTitleForSheet = `${r1.title} & ${r2.title}`;
+
+  } else {
+    // 하나
+    const r = results[winners[0]];
+    document.getElementById('resultHero').className = `result-hero ${r.heroClass}`;
+    document.getElementById('resultSymbol').textContent = r.symbol;
+    document.getElementById('resultLabel').textContent = r.label;
+    document.getElementById('resultTitle').textContent = r.title;
+    document.getElementById('resultSub').textContent = r.sub;
+    renderResultBody([r]);
+    resultTitleForSheet = r.title;
+  }
+
   document.getElementById('numSun').textContent = count.A;
   document.getElementById('numMoon').textContent = count.B;
   document.getElementById('numStar').textContent = count.C;
@@ -652,7 +696,7 @@ function showResult() {
     name: userInfo.name,
     age: userInfo.age,
     phone: userInfo.phone,
-    result: r.title,
+    result: resultTitleForSheet,
     countA: count.A,
     countB: count.B,
     countC: count.C
