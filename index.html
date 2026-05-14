@@ -200,6 +200,9 @@
   }
   .option-btn:hover { border-color: var(--text); background: #FFFDF9; }
   .option-btn.selected { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .option-skip { color: var(--text-light); border-style: dashed; }
+  .option-skip:hover { border-color: var(--text-light); background: white; }
+  .option-skip.selected { background: var(--text-light); color: var(--bg); border-color: var(--text-light); }
 
   .option-label { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.2em; opacity: 0.5; display: block; margin-bottom: 4px; }
 
@@ -585,6 +588,10 @@ function renderQuestion(idx) {
             <span class="option-label">${o.label}</span>${o.text}
           </button>
         `).join('')}
+        <button class="option-btn option-skip ${answered === 'SKIP' ? 'selected' : ''}"
+          onclick="selectAnswer('SKIP', this)">
+          <span class="option-label">—</span>해당 없음
+        </button>
       </div>
       <div class="nav-row">
         <button class="btn-prev" onclick="goPrev()" ${idx === 0 ? 'disabled' : ''}>← 이전 문항</button>
@@ -652,7 +659,7 @@ function showResult() {
   document.getElementById('result').style.display = 'block';
 
   const count = { A: 0, B: 0, C: 0 };
-  answers.forEach(a => { if (a) count[a]++; });
+  answers.forEach(a => { if (a && a !== 'SKIP') count[a]++; });
 
   const max = Math.max(count.A, count.B, count.C);
   const winners = Object.keys(count).filter(k => count[k] === max);
