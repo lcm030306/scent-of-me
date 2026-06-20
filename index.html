@@ -588,10 +588,6 @@ function renderQuestion(idx) {
             <span class="option-label">${o.label}</span>${o.text}
           </button>
         `).join('')}
-        <button class="option-btn option-skip ${answered === 'SKIP' ? 'selected' : ''}"
-          onclick="selectAnswer('SKIP', this)">
-          <span class="option-label">—</span>해당 없음
-        </button>
       </div>
       <div class="nav-row">
         <button class="btn-prev" onclick="goPrev()" ${idx === 0 ? 'disabled' : ''}>← 이전 문항</button>
